@@ -1,0 +1,361 @@
+[
+  {
+    "type": "tab",
+    "id": "828b2334.7d74e",
+    "label": "Sheet 1",
+    "debugBreak": false,
+    "debugOutput": false
+  },
+  {
+    "id": "68544f62.97abb",
+    "type": "flow server",
+    "hosted": true,
+    "name": "flow",
+    "flowFile": "flow.json",
+    "configFile": "config.json"
+  },
+  {
+    "id": "d56783d8.8d9bb",
+    "type": "twilio-api",
+    "configKey": "",
+    "sid": "AC9eda52484116c177c20d5065baccd304",
+    "from": "+18173306006",
+    "token": "6de085fd73442cb20cdb9351c768ffea",
+    "name": "Test Account"
+  },
+  {
+    "id": "f1870aab.f4e588",
+    "type": "m2x feed",
+    "apiKey": "b8c5074464a037ba827cbeb3a2bc9970",
+    "name": "Bean"
+  },
+  {
+    "id": "2a31931b.5dcf4c",
+    "type": "mqtt-broker",
+    "broker": "localhost",
+    "port": "1883",
+    "hosted": true,
+    "name": "bean-demo",
+    "configKey": "",
+    "username": "",
+    "password": "",
+    "clientid": "",
+    "encryptObj": [
+      "username",
+      "password"
+    ]
+  },
+  {
+    "id": "2efd73a5.50e8cc",
+    "type": "debug",
+    "debugBreak": false,
+    "debugOutput": false,
+    "name": "temp",
+    "active": false,
+    "console": "false",
+    "complete": "payload",
+    "x": 340.8125,
+    "y": 120,
+    "z": "828b2334.7d74e",
+    "wires": [
+
+    ]
+  },
+  {
+    "id": "14467bd6.8dec34",
+    "type": "mqtt in",
+    "debugBreak": false,
+    "debugOutput": false,
+    "name": "",
+    "topic": "bean/temp",
+    "broker": "2a31931b.5dcf4c",
+    "x": 96.921875,
+    "y": 103,
+    "z": "828b2334.7d74e",
+    "wires": [
+      [
+        "2efd73a5.50e8cc",
+        "7a59ef7b.39733"
+      ]
+    ]
+  },
+  {
+    "id": "badd09c0.d9b008",
+    "type": "mqtt in",
+    "debugBreak": false,
+    "debugOutput": false,
+    "name": "",
+    "topic": "bean/accel",
+    "broker": "2a31931b.5dcf4c",
+    "x": 120.921875,
+    "y": 163,
+    "z": "828b2334.7d74e",
+    "wires": [
+      [
+        "90999f1e.f4da3",
+        "34a790d2.84a64"
+      ]
+    ]
+  },
+  {
+    "id": "90999f1e.f4da3",
+    "type": "debug",
+    "debugBreak": false,
+    "debugOutput": false,
+    "name": "accel",
+    "active": false,
+    "console": "false",
+    "complete": "payload",
+    "x": 340.921875,
+    "y": 172,
+    "z": "828b2334.7d74e",
+    "wires": [
+
+    ]
+  },
+  {
+    "id": "b6c18a14.2e6408",
+    "type": "m2x",
+    "debugBreak": false,
+    "debugOutput": false,
+    "feed": "f1870aab.f4e588",
+    "name": "",
+    "x": 845.921875,
+    "y": 168,
+    "z": "828b2334.7d74e",
+    "wires": [
+      [
+
+      ]
+    ]
+  },
+  {
+    "id": "95b5a96b.ae2b38",
+    "type": "function",
+    "debugBreak": false,
+    "debugOutput": false,
+    "name": "Temp to M2X",
+    "func": "\nmsg.topic = \"devices\";\nmsg.action = \"postMultiple\";\nmsg.topic_id = msg.payload.deviceID;\ntimestamp = new Date(msg.payload.timestamp).toISOString();\nmsg.payload = {\n  \"temperature\": [\n    { \"timestamp\": timestamp, \"value\": msg.payload.temp  }],\n};\n\nreturn msg;",
+    "outputs": 1,
+    "valid": true,
+    "dependencies": [
+
+    ],
+    "x": 577.609375,
+    "y": 119,
+    "z": "828b2334.7d74e",
+    "wires": [
+      [
+        "6a8ec3bb.0f544c",
+        "b6c18a14.2e6408"
+      ]
+    ]
+  },
+  {
+    "id": "c8638e29.fd4f7",
+    "type": "function",
+    "debugBreak": false,
+    "debugOutput": false,
+    "name": "Accel to M2X",
+    "func": "//Post multiple values to multiple streams example\n\nmsg.topic = \"devices\";\nmsg.action = \"postMultiple\";\nmsg.topic_id = msg.payload.deviceID;\nvar timestamp = new Date(msg.payload.timestamp).toISOString();\nmsg.payload = {\n  \"xaxis\": [\n    { \"timestamp\": timestamp, \"value\": msg.payload.accelX }],\n  \"yaxis\": [\n    { \"timestamp\": timestamp, \"value\": msg.payload.accelY }]    \n};\n\nreturn msg;",
+    "outputs": 1,
+    "valid": true,
+    "dependencies": [
+
+    ],
+    "x": 567.921875,
+    "y": 203,
+    "z": "828b2334.7d74e",
+    "wires": [
+      [
+        "b6c18a14.2e6408",
+        "7bcd6848.ce4b78"
+      ]
+    ]
+  },
+  {
+    "id": "6a8ec3bb.0f544c",
+    "type": "debug",
+    "debugBreak": false,
+    "debugOutput": false,
+    "name": "temp - m2x",
+    "active": false,
+    "console": "false",
+    "complete": "true",
+    "x": 766.5885238647461,
+    "y": 86.99999809265137,
+    "z": "828b2334.7d74e",
+    "wires": [
+
+    ]
+  },
+  {
+    "id": "7a59ef7b.39733",
+    "type": "json",
+    "debugBreak": false,
+    "debugOutput": false,
+    "name": "",
+    "x": 334.921875,
+    "y": 65,
+    "z": "828b2334.7d74e",
+    "wires": [
+      [
+        "95b5a96b.ae2b38"
+      ]
+    ]
+  },
+  {
+    "id": "34a790d2.84a64",
+    "type": "json",
+    "debugBreak": false,
+    "debugOutput": false,
+    "name": "",
+    "x": 340.921875,
+    "y": 226,
+    "z": "828b2334.7d74e",
+    "wires": [
+      [
+        "c8638e29.fd4f7",
+        "6f2ffb59.39da14"
+      ]
+    ]
+  },
+  {
+    "id": "7bcd6848.ce4b78",
+    "type": "debug",
+    "debugBreak": false,
+    "debugOutput": false,
+    "name": "accel - m2x",
+    "active": false,
+    "console": "false",
+    "complete": "true",
+    "x": 747.921875,
+    "y": 242,
+    "z": "828b2334.7d74e",
+    "wires": [
+
+    ]
+  },
+  {
+    "id": "aee2c65b.f16d18",
+    "type": "twilio out",
+    "debugBreak": false,
+    "debugOutput": false,
+    "twilio": "d56783d8.8d9bb",
+    "twilioType": "sms",
+    "url": "",
+    "number": "8173191615",
+    "name": "",
+    "x": 515.921875,
+    "y": 388,
+    "z": "828b2334.7d74e",
+    "wires": [
+
+    ]
+  },
+  {
+    "id": "6f2ffb59.39da14",
+    "type": "function",
+    "debugBreak": false,
+    "debugOutput": false,
+    "name": "Accel to M2X",
+    "func": "if(Math.abs(msg.payload.accelX) > 0.91)\n{\n    msg.topic = null;\n    msg.payload = \"Tilt warning!\";\n    return msg;\n}",
+    "outputs": 1,
+    "valid": true,
+    "dependencies": [
+
+    ],
+    "x": 558.9218902587891,
+    "y": 287.00000381469727,
+    "z": "828b2334.7d74e",
+    "wires": [
+      [
+        "72c5e0d8.5356f"
+      ]
+    ]
+  },
+  {
+    "id": "72c5e0d8.5356f",
+    "type": "debug",
+    "debugBreak": false,
+    "debugOutput": false,
+    "name": "",
+    "active": true,
+    "console": "false",
+    "complete": "true",
+    "x": 763.5781402587891,
+    "y": 361.5590238571167,
+    "z": "828b2334.7d74e",
+    "wires": [
+
+    ]
+  },
+  {
+    "id": "17f20bd7.52eee4",
+    "type": "http in",
+    "debugBreak": false,
+    "debugOutput": false,
+    "name": "Tilt Alarm",
+    "url": "/tiltalarm",
+    "method": "post",
+    "configKey": "",
+    "username": "",
+    "password": "",
+    "authType": "noAuth",
+    "useAuth": false,
+    "useOauth": false,
+    "encryption": "none",
+    "realm": "",
+    "clientId": "",
+    "clientSecret": "",
+    "site": "",
+    "authorizationPath": "/oauth/authorize",
+    "tokenPath": "/oauth/access_token",
+    "scope": "",
+    "encryptObj": [
+      "username",
+      "password",
+      "clientId",
+      "clientSecret"
+    ],
+    "x": 95.34375,
+    "y": 327,
+    "z": "828b2334.7d74e",
+    "wires": [
+      [
+        "135b0e44.4c7382",
+        "d2b85359.3b551",
+        "aee2c65b.f16d18"
+      ]
+    ]
+  },
+  {
+    "id": "135b0e44.4c7382",
+    "type": "debug",
+    "debugBreak": false,
+    "debugOutput": false,
+    "name": "",
+    "active": true,
+    "console": "false",
+    "complete": "false",
+    "x": 373.34375,
+    "y": 331,
+    "z": "828b2334.7d74e",
+    "wires": [
+
+    ]
+  },
+  {
+    "id": "d2b85359.3b551",
+    "type": "http response",
+    "debugBreak": false,
+    "debugOutput": false,
+    "name": "",
+    "x": 348.34375,
+    "y": 390,
+    "z": "828b2334.7d74e",
+    "wires": [
+
+    ]
+  }
+]
